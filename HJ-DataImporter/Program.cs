@@ -15,7 +15,7 @@ namespace DataImporter
 {
     class Program
     {
-        public static int batchSize = 10000;
+        public static int batchSize = 0;
         public static string fileSystemPath = @"C:\Users\kagajjar\Desktop\WIP\Travellanda\";
         static void Main(string[] args)
         {
@@ -58,6 +58,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "CountriesTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("CountryCode", "CountryCode");
                             bulkCopy.ColumnMappings.Add("CountryName", "CountryName");
                             bulkCopy.NotifyAfter = batchSize;
@@ -111,6 +112,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy =new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "CitiesTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("CityId", "CityId");
                             bulkCopy.ColumnMappings.Add("CityName", "CityName");
                             bulkCopy.ColumnMappings.Add("StateCode", "StateCode");
@@ -171,6 +173,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "HotelsTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("HotelId", "HotelId");
                             bulkCopy.ColumnMappings.Add("CityId", "CityId");
                             bulkCopy.ColumnMappings.Add("HotelName", "HotelName");
@@ -229,6 +232,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "FacilitiesTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("HotelId", "HotelId");
                             bulkCopy.ColumnMappings.Add("FacilityType", "FacilityType");
                             bulkCopy.ColumnMappings.Add("FacilityName", "FacilityName");
@@ -280,6 +284,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "DescriptionsTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("HotelId", "HotelId");
                             bulkCopy.ColumnMappings.Add("Description", "Description");
                             bulkCopy.NotifyAfter = batchSize;
@@ -330,6 +335,7 @@ namespace DataImporter
                         using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destinationConnection))
                         {
                             bulkCopy.DestinationTableName = "ImagesTemp";
+                            TruncateTable(bulkCopy.DestinationTableName, destinationConnection);
                             bulkCopy.ColumnMappings.Add("HotelId", "HotelId");
                             bulkCopy.ColumnMappings.Add("Image", "Image");
                             bulkCopy.NotifyAfter = batchSize;
@@ -351,7 +357,14 @@ namespace DataImporter
                 }
             }
         }
-        private static string GetConnectionString()
+ 
+        private static void TruncateTable(string destinationTableName, SqlConnection conn)
+        {
+            SqlCommand deleteCommand = new SqlCommand("TRUNCATE TABLE " + destinationTableName, conn);
+            var count = deleteCommand.ExecuteNonQuery();
+            Console.WriteLine(string.Format("TRUNCATED {0} (NoCount) records from {1}", count, destinationTableName));
+        }
+       private static string GetConnectionString()
         // To avoid storing the sourceConnection string in your code, 
         // you can retrieve it from a configuration file. 
         {
