@@ -1,3 +1,5 @@
+Amir@132.148.134.86:3306
+
 -- GRANT ALL PRIVILEGES
 
 CREATE USER 'Amir'@'localhost' IDENTIFIED BY 'AmirScottAnderson)(^6385?';
